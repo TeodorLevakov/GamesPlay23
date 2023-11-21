@@ -1,17 +1,15 @@
 import { useState, useEffect } from "react";
 import Game from "../game/Game";
 
-const baseUrl = 'http://localhost:3030/jsonstore/games';
-
+import * as gameService from '../../services/gameService';
 
 
 export default function GameList() {
     const [games, setGames] = useState([]);
 
     useEffect(() => {
-        fetch(baseUrl)
-            .then(res => res.json())
-            .then(data => setGames(Object.values(data)))
+        gameService.getAll()
+            .then(result => setGames(result))     
     }, []);
 
     return (
@@ -22,7 +20,7 @@ export default function GameList() {
                 {games.map(x => <Game key={x._id} {...x}/>)}
                 
                 {/* Display paragraph: If there is no games  */}
-                <h3 className="no-articles">No articles yet</h3>
+                {games.length == 0 && <h3 className="no-articles">No articles yet</h3>}
             </section>
         </>
     );
