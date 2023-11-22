@@ -5,12 +5,16 @@ import * as commentService from '../../services/commentService';
 
 export default function GameDetails() {
     const [game, setGame] = useState({});
+    const [comments, setComments] = useState([]);
 
     const {id} = useParams();
 
     useEffect(() => {
         gameService.getOne(id)
-            .then(data => setGame(data))
+            .then(data => setGame(data));
+
+        commentService.getAll()
+            .then(comment => setComments(comment));
     }, [id]);
 
     const addCommentHandler = async (e) => {
@@ -18,9 +22,9 @@ export default function GameDetails() {
 
         const {username, comment} = Object.fromEntries(new FormData(e.target));
         
-        const newComment = await commentService.create(id, username, comment);
-
-        console.log(newComment);
+        const newComment = await commentService.create(id, username, comment);    
+        
+        setComments(state => [...state, newComment]);
     }
 
     return (
@@ -40,24 +44,17 @@ export default function GameDetails() {
                     <h2>Comments:</h2>
                     <ul>
                         {/* list all comments for current game (If any) */}
-                        <li className="comment">
-                            <p>Content: I rate this one quite highly.</p>
-                        </li>
-                        <li className="comment">
-                            <p>Content: The best game.</p>
-                        </li>
+                        {comments.map(({_id, username, text}) => <li key={_id} className="comment"><p>{username}: {text}</p></li>)}
                     </ul>
+
                     {/* Display paragraph: If there are no games in the database */}
-                    <p className="no-comment">No comments.</p>
+                    {comments.length == 0 && <p className="no-comment">No comments.</p>}
                 </div>
+
                 {/* Edit/Delete buttons ( Only for creator of this game )  */}
                 <div className="buttons">
-                    <a href="#" className="button">
-                        Edit
-                    </a>
-                    <a href="#" className="button">
-                        Delete
-                    </a>
+                    <a href="#" className="button">Edit</a>
+                    <a href="#" className="button">Delete</a>
                 </div>
             </div>
 
