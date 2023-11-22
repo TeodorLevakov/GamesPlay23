@@ -7,15 +7,15 @@ export default function GameDetails() {
     const [game, setGame] = useState({});
     const [comments, setComments] = useState([]);
 
-    const {id} = useParams();
+    const {gameId} = useParams();
 
     useEffect(() => {
-        gameService.getOne(id)
+        gameService.getOne(gameId)
             .then(data => setGame(data));
 
-        commentService.getAll()
+        commentService.getAll(gameId)
             .then(comment => setComments(comment));
-    }, [id]);
+    }, [gameId]);
 
     const addCommentHandler = async (e) => {
         e.preventDefault();
